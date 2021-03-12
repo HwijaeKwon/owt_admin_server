@@ -12,8 +12,8 @@ public class WorkerService {
 
     public ListDto<List<WorkerInfo>> findAll(String purpose) {
         WorkerInfo workerInfo = new WorkerInfo("", 1, 1, 1, "");
-        List<WorkerInfo> list = new ArrayList();
+        List<WorkerInfo> list = new ArrayList<WorkerInfo>();
         list.add(workerInfo);
-        return new ListDto(3, list);
+        return new ListDto<List<WorkerInfo>>(3, list);
     }
 }

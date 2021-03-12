@@ -26,10 +26,19 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	//springdoc openapi
 	implementation("org.springdoc:springdoc-openapi-ui:1.5.5")
+	// reactor
+	implementation("io.projectreactor:reactor-core")
 	//spring cloud stream rabbitmq
 	implementation("org.springframework.cloud:spring-cloud-starter-stream-rabbit")
+	implementation("org.springframework.cloud:spring-cloud-stream-binder-rabbit")
 	// spring cloud stream
 	implementation("org.springframework.cloud:spring-cloud-stream")
+	implementation("org.springframework:spring-messaging")
+	//gson
+	implementation("com.google.code.gson:gson:2.8.6")
+	//json object
+	implementation("com.vaadin.external.google:android-json:0.0.20131108.vaadin1")
+
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

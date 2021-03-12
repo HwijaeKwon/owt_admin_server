@@ -1,3 +1,40 @@
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
+
+spring:
+  cloud:
+    function:
+      definition: tx;rx
+    stream:
+      bindings:
+        tx-out-0:
+          binder: rabbit
+          destination: owtRpc
+        rx-in-0:
+          binder: rabbit
+          destination: owtRpc
+          group: admin
+      rabbit:
+        bindings:
+          rx-in-0:
+            consumer:
+              exchange-type: direct
+              binding-routing-key: 'admin'
+          tx-out-0:
+            producer:
+              exchangeDurable: false
+              exchangeAutoDelete: true
+              exchange-type: direct
+              routing-key-expression: headers['routingKey']
+
+  rabbitmq:
+    host: 192.168.9.14
+    port: 54321
+    username: test
+    password: test1234
+
+logging:
+  level:
+    org.springframework: INFO
+    org.springframework.web: DEBUG
