@@ -25,11 +25,11 @@ public class RpcController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    private final HashMap<Integer, Sinks.Many<Pair<String, String>>> processorMap = new HashMap<Integer, Sinks.Many<Pair<String, String>>>();
+    private final HashMap<Integer, Sinks.Many<RpcReply>> processorMap = new HashMap<Integer, Sinks.Many<RpcReply>>();
 
     private final Sinks.Many<Message<String>> sendProcessor = Sinks.many().unicast().onBackpressureBuffer();
 
-    public Pair<Flux<Pair<String, String>>, Integer> sendMessage(String routingKey, String method, JSONArray args, Integer corrID) {
+    public RpcResult sendMessage(String routingKey, String method, JSONArray args, Integer corrID) throws IllegalStateException {
 
         if(corrID == null) {
             int maxCorrID = 10000;
@@ -42,7 +42,7 @@ public class RpcController {
 
         try {
             message.put("method", method);
-            message.put("args", args.toString());
+            message.put("args", args);
             message.put("corrID", corrID);
             String bindingRoutingKey = "admin";
             message.put("replyTo", bindingRoutingKey);
@@ -66,11 +66,10 @@ public class RpcController {
             }
         });
 
-        return Pair.of(processorMap.get(corrID).asFlux(), corrID);
+        return new RpcResult(processorMap.get(corrID).asFlux(), corrID);
     }
 
     private void receiveMessage(String message) throws JSONException {
-        System.out.println("rx!!: " + message);
         JSONObject jsonMessage = new JSONObject(message);
         Integer corrID = jsonMessage.optInt("corrID");
         String data = jsonMessage.optString("data");
@@ -78,8 +77,7 @@ public class RpcController {
         if(jsonMessage.has("err")) error = jsonMessage.optString("err");
         if(!processorMap.containsKey(corrID))
             throw new IllegalStateException("Receiver processor not found: " + corrID);
-        System.out.println("ok!!!");
-        processorMap.get(corrID).emitNext(Pair.of(data, error), Sinks.EmitFailureHandler.FAIL_FAST);
+        processorMap.get(corrID).emitNext(new RpcReply(data, error), Sinks.EmitFailureHandler.FAIL_FAST);
     }
 
     public void deleteCorrID(Integer corrID) {

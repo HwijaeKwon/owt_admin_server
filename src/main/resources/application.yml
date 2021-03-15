@@ -31,8 +31,8 @@ spring:
   rabbitmq:
     host: 192.168.9.14
     port: 54321
-    username: test
-    password: test1234
+    username: hypermeeting
+    password: qwer1234
 
 logging:
   level:
