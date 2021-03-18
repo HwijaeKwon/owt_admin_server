@@ -37,7 +37,9 @@ public class WorkerController {
             @ApiResponse(description = "Rpc Timeout or Rpc Error", responseCode = "500", content = @Content(mediaType = "text_plain", schema = @Schema(description = "Error message", example = "Timeout on blocking for ~ seocnds", implementation = String.class))),
     })
     public WorkerListDto findWorkerByPurpose(
+            @Parameter(description = "Purpose of the worker")
             @RequestParam(name = "purpose", required = false, defaultValue = "all") String purpose,
+            @Parameter(description = "Maximum number of worker to get")
             @RequestParam(name = "count", required = false, defaultValue = "10") int count) throws RuntimeException, RpcReplyErrorException {
 
             List<Worker> workers = workerService.findWorkerByPurpose(purpose, count);
@@ -58,13 +60,15 @@ public class WorkerController {
     }
 
     @GetMapping("/api/workers/scheduled")
-    @Operation(summary = "Find worker by purpose and task", description = "Get worker according to purpose and task")
+    @Operation(summary = "Find scheduled worker by purpose and task", description = "Get scheduled worker according to purpose and task")
     @ApiResponses(value = {
             @ApiResponse(description = "Success", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(description = "Worker attribute", implementation = WorkerDto.class))),
             @ApiResponse(description = "Rpc Timeout or Rpc Error", responseCode = "500", content = @Content(mediaType = "text_plain", schema = @Schema(description = "Error message", example = "Timeout on blocking for ~ seocnds", implementation = String.class))),
     })
-    public WorkerDto findWorkerByPurposeAndTask(
+    public WorkerDto findScheduledWorker(
+            @Parameter(description = "Purpose of the worker to get", required = true)
             @RequestParam(name = "purpose") String purpose,
+            @Parameter(description = "Task of the worker to get", required = true)
             @RequestParam(name = "task") String task) throws RuntimeException, RpcReplyErrorException {
 
         return new WorkerDto(workerService.findWorkerByPurposeAndTask(purpose, task));
